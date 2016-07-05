@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index of packages</title>
+</head>
+<body>
+<h1>Index of packages</h1>
+{% for link in links %}
+<a href="{{link.href}}">{{link.file}}</a><br>
+{% endfor %}
+</body>
+</html>
