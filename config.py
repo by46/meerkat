@@ -1,0 +1,5 @@
+DFIS_HOST = 'scmesos04'
+DFIS_GROUP = 'test_ttl'
+DFIS_TYPE = 'carl'
+SIMPLES = 'simples'
+PACKAGES = 'packages'

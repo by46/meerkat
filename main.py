@@ -9,20 +9,17 @@ from collections import namedtuple
 import redis
 from flask import Flask
 from flask import abort
+from flask import redirect
 from flask import render_template
 from flask import request
 
 import cabinet
+import config
 import utils
 
 app = Flask(__name__)
 
 conn = redis.Redis(host='scpodb02')
-DFIS_HOST = 'scmesos04'
-DFIS_GROUP = 'test_ttl'
-DFIS_TYPE = 'carl'
-SIMPLES = 'simples'
-PACKAGES = 'packages'
 
 Upload = namedtuple('Upload', 'pkg, sig')
 
@@ -48,7 +45,7 @@ def update():
 
 @app.route('/simple/')
 def simple_index():
-    links = conn.smembers(SIMPLES)
+    links = conn.smembers(config.SIMPLES)
     return render_template('simple.html', links=links)
 
 
@@ -60,7 +57,7 @@ def simple(prefix=''):
     for package in packages:
         package_key = 'package:{0}'.format(package)
         info = conn.hgetall(package_key)
-        href = '{0}#md5={1}'.format(info.get('url'), info.get('md5'))
+        href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
         links.append(dict(file=package, href=href))
 
     return render_template('simple_detail.html', links=links, prefix=prefix)
@@ -68,15 +65,28 @@ def simple(prefix=''):
 
 @app.route('/packages/')
 def list_packages():
-    packages = conn.smembers(PACKAGES)
+    packages = conn.smembers(config.PACKAGES)
     links = []
     for package in packages:
         package_key = 'package:{0}'.format(package)
         info = conn.hgetall(package_key)
-        href = '{0}#md5={1}'.format(info.get('url'), info.get('md5'))
+        href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
         links.append(dict(file=package, href=href))
 
     return render_template('packages.html', links=links)
+
+
+@app.route('/packages/<filename>')
+def download(filename):
+    key = 'package:{0}'.format(filename)
+    if conn.exists(key):
+        # TODO(benjamin): add statistic info
+        url = 'http://{host}/{group}/{type}/{filename}'.format(host=config.DFIS_HOST, group=config.DFIS_GROUP,
+                                                               type=config.DFIS_TYPE,
+                                                               filename=filename)
+        return redirect(url)
+
+    abort(404)
 
 
 def file_upload():
@@ -103,14 +113,15 @@ def file_upload():
 
         content = f.stream.read()
         md5 = hashlib.md5(content).hexdigest()
-        client = cabinet.Cabinet(host=DFIS_HOST)
-        result = client.upload(StringIO(content), DFIS_GROUP, DFIS_TYPE, 'UPDATE', filename)
+        client = cabinet.Cabinet(host=config.DFIS_HOST)
+        app.logger.info('upload package to dfis %s %s %s %s', config.DFIS_HOST, config.DFIS_GROUP, config.DFIS_TYPE,
+                        filename)
+        result = client.upload(StringIO(content), config.DFIS_GROUP, config.DFIS_TYPE, 'UPDATE', filename)
         if result == httplib.OK:
-            # TODO(benjamin): process package
             pkg_name, version = pkg
-            url = client.make_url(DFIS_GROUP, DFIS_TYPE, filename)
-            conn.sadd(PACKAGES, filename)
-            conn.sadd(SIMPLES, pkg_name)
+            url = client.make_url(config.DFIS_GROUP, config.DFIS_TYPE, filename)
+            conn.sadd(config.PACKAGES, filename)
+            conn.sadd(config.SIMPLES, pkg_name)
             key = 'packages:{0}'.format(pkg_name)
             conn.sadd(key, filename)
             key = 'package:{0}'.format(filename)
@@ -120,5 +131,18 @@ def file_upload():
 
 if __name__ == '__main__':
     from gevent.wsgi import WSGIServer
+    import os
+    import os.path
+    import logging
+    from logging.handlers import RotatingFileHandler
+
+    logs = "/var/meerkat/logs"
+    if not os.path.exists(logs):
+        os.makedirs(logs)
+
+    handler = RotatingFileHandler(os.path.join(logs, 'error.log'), maxBytes=1024 * 1024 * 10, backupCount=10)
+    handler.setLevel(logging.DEBUG)
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.DEBUG)
 
     WSGIServer(('', 8889), application=app).serve_forever()
