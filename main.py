@@ -19,7 +19,7 @@ import utils
 
 app = Flask(__name__)
 
-conn = redis.Redis(host='scpodb02')
+conn = redis.Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
 
 Upload = namedtuple('Upload', 'pkg, sig')
 

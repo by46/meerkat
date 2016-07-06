@@ -1,5 +1,7 @@
-DFIS_HOST = 'scmesos04'
-DFIS_GROUP = 'test_ttl'
-DFIS_TYPE = 'carl'
+DFIS_HOST = '10.16.78.84'
+DFIS_GROUP = 'dfis'
+DFIS_TYPE = 'pypi'
+REDIS_HOST = '10.16.83.52'
+REDIS_PORT = 6379
 SIMPLES = 'simples'
 PACKAGES = 'packages'
