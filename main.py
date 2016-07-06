@@ -145,4 +145,4 @@ if __name__ == '__main__':
     app.logger.addHandler(handler)
     app.logger.setLevel(logging.DEBUG)
 
-    WSGIServer(('', 8889), application=app).serve_forever()
+    WSGIServer(('', 8080), application=app).serve_forever()
