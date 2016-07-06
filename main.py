@@ -68,7 +68,7 @@ def list_packages():
     packages = conn.smembers(config.PACKAGES)
     links = []
     for package in packages:
-        package_key = 'package:{0}'.format(package)
+        package_key = 'package:{0}'.format(package.lower())
         info = conn.hgetall(package_key)
         href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
         links.append(dict(file=package, href=href))
@@ -78,6 +78,7 @@ def list_packages():
 
 @app.route('/packages/<filename>')
 def download(filename):
+    filename = filename.lower()
     key = 'package:{0}'.format(filename)
     if conn.exists(key):
         # TODO(benjamin): add statistic info
@@ -119,13 +120,14 @@ def file_upload():
         result = client.upload(StringIO(content), config.DFIS_GROUP, config.DFIS_TYPE, 'UPDATE', filename)
         if result == httplib.OK:
             pkg_name, version = pkg
+            safe_filename = filename.lower()
             url = client.make_url(config.DFIS_GROUP, config.DFIS_TYPE, filename)
             conn.sadd(config.PACKAGES, filename)
             conn.sadd(config.SIMPLES, pkg_name)
-            key = 'packages:{0}'.format(pkg_name)
+            key = 'packages:{0}'.format(pkg_name.lower())
             conn.sadd(key, filename)
-            key = 'package:{0}'.format(filename)
-            info = dict(md5=md5, url=url, timestamp=time.time())
+            key = 'package:{0}'.format(safe_filename)
+            info = dict(md5=md5, url=url, timestamp=time.time(), filename=filename)
             conn.hmset(key, info)
 
 
