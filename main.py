@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import hashlib
 import httplib
+import string
 import time
 from cStringIO import StringIO
 from collections import namedtuple
@@ -46,6 +47,7 @@ def update():
 @app.route('/simple/')
 def simple_index():
     links = conn.smembers(config.SIMPLES)
+    links = sorted(links, key=string.lower)
     return render_template('simple.html', links=links)
 
 
@@ -73,6 +75,7 @@ def simple(prefix=''):
 @app.route('/packages/')
 def list_packages():
     packages = conn.smembers(config.PACKAGES)
+    packages = sorted(packages, key=string.lower)
     links = []
     for package in packages:
         package_key = 'package:{0}'.format(package.lower())
