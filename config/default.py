@@ -5,3 +5,6 @@ REDIS_HOST = '10.16.83.52'
 REDIS_PORT = 6379
 SIMPLES = 'simples'
 PACKAGES = 'packages'
+HTTP_HOST = ''
+HTTP_PORT = 8080
+LOG = '/var/meerkat/logs'

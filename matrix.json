@@ -5,5 +5,5 @@
   "port": [8080],
   "env": {},
   "volume": [],
-  "cmd": [ "python", "main.py"]
+  "cmd": [ "python", "run.py"]
 }
