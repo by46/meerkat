@@ -27,7 +27,8 @@ Upload = namedtuple('Upload', 'pkg, sig')
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    total_packages = conn.scard(config.PACKAGES)
+    return render_template('index.html', total_packages=total_packages)
 
 
 @app.route('/', methods=['POST'])
