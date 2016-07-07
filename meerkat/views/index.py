@@ -6,21 +6,24 @@ from cStringIO import StringIO
 from flask import abort
 from flask import render_template
 from flask import request
+from flask import Blueprint
 
 from meerkat import app
 from meerkat import cabinet
 from meerkat import utils
 
-conn = app.config['CONN']
+
+page = Blueprint('index', __name__)
 
 
-@app.route('/', methods=['GET'])
+@page.route('/', methods=['GET'])
 def index():
+    conn = app.config['CONN']
     total_packages = conn.scard(app.config['PACKAGES'])
     return render_template('index.html', total_packages=total_packages)
 
 
-@app.route('/', methods=['POST'])
+@page.route('/', methods=['POST'])
 def update():
     try:
         action = request.form[':action']
@@ -35,6 +38,7 @@ def update():
 
 
 def file_upload():
+    conn = app.config['CONN']
     # TODO(benjamin): process gpg_signature
     package = request.files.get('content', None)
     if not package:

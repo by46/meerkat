@@ -1,5 +1,6 @@
 import string
 
+from flask import Blueprint
 from flask import abort
 from flask import redirect
 from flask import render_template
@@ -7,18 +8,20 @@ from flask import render_template
 from meerkat import app
 from meerkat import utils
 
-conn = app.config['CONN']
+page = Blueprint('simple', __name__)
 
 
-@app.route('/simple/')
+@page.route('/simple/')
 def simple_index():
+    conn = app.config['CONN']
     links = conn.smembers(app.config['SIMPLES'])
     links = sorted(links, key=string.lower)
     return render_template('simple.html', links=links)
 
 
-@app.route('/simple/<prefix>/')
+@page.route('/simple/<prefix>/')
 def simple(prefix=''):
+    conn = app.config['CONN']
     normalized, prefix = utils.normalize_pkg_name(prefix)
     if normalized:
         return redirect('/simple/{0}/'.format(prefix))

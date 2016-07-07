@@ -1,16 +1,18 @@
 import string
 
+from flask import Blueprint
 from flask import abort
 from flask import redirect
 from flask import render_template
 
 from meerkat import app
 
-conn = app.config['CONN']
+page = Blueprint('package', __name__)
 
 
-@app.route('/packages/')
+@page.route('/packages/')
 def list_packages():
+    conn = app.config['CONN']
     packages = conn.smembers(app.config['PACKAGES'])
     packages = sorted(packages, key=string.lower)
     links = []
@@ -23,8 +25,9 @@ def list_packages():
     return render_template('packages.html', links=links)
 
 
-@app.route('/packages/<filename>')
+@page.route('/packages/<filename>')
 def download(filename):
+    conn = app.config['CONN']
     filename = filename.lower()
     key = 'package:{0}'.format(filename)
     if conn.exists(key):
