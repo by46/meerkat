@@ -6,6 +6,7 @@ from flask import redirect
 from flask import render_template
 
 from meerkat import app
+from meerkat.constants import PACKAGES
 
 page = Blueprint('package', __name__)
 
@@ -13,7 +14,7 @@ page = Blueprint('package', __name__)
 @page.route('/packages/')
 def list_packages():
     conn = app.config['CONN']
-    packages = conn.smembers(app.config['PACKAGES'])
+    packages = conn.smembers(PACKAGES)
     packages = sorted(packages, key=string.lower)
     links = []
     for package in packages:

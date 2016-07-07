@@ -7,6 +7,7 @@ from flask import render_template
 
 from meerkat import app
 from meerkat import utils
+from meerkat.constants import SIMPLES
 
 page = Blueprint('simple', __name__)
 
@@ -14,7 +15,7 @@ page = Blueprint('simple', __name__)
 @page.route('/simple/')
 def simple_index():
     conn = app.config['CONN']
-    links = conn.smembers(app.config['SIMPLES'])
+    links = conn.smembers(SIMPLES)
     links = sorted(links, key=string.lower)
     return render_template('simple.html', links=links)
 

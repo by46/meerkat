@@ -1,0 +1,2 @@
+SIMPLES = 'simples'
+PACKAGES = 'packages'

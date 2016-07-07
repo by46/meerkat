@@ -3,15 +3,15 @@ import httplib
 import time
 from cStringIO import StringIO
 
+from flask import Blueprint
 from flask import abort
 from flask import render_template
 from flask import request
-from flask import Blueprint
 
 from meerkat import app
 from meerkat import cabinet
 from meerkat import utils
-
+from meerkat.constants import PACKAGES, SIMPLES
 
 page = Blueprint('index', __name__)
 
@@ -19,7 +19,7 @@ page = Blueprint('index', __name__)
 @page.route('/', methods=['GET'])
 def index():
     conn = app.config['CONN']
-    total_packages = conn.scard(app.config['PACKAGES'])
+    total_packages = conn.scard(PACKAGES)
     return render_template('index.html', total_packages=total_packages)
 
 
@@ -68,8 +68,8 @@ def file_upload():
     pkg_name, version = name_and_version
     safe_filename = filename.lower()
     url = client.make_url(app.config['DFIS_GROUP'], app.config['DFIS_TYPE'], filename)
-    conn.sadd(app.config['PACKAGES'], filename)
-    conn.sadd(app.config['SIMPLES'], pkg_name)
+    conn.sadd(PACKAGES, filename)
+    conn.sadd(SIMPLES, pkg_name)
     _, pkg_name = utils.normalize_pkg_name(pkg_name)
     key = 'packages:{0}'.format(pkg_name)
     conn.sadd(key, filename)
