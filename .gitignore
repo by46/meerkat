@@ -60,3 +60,6 @@ docs/_build/
 target/
 
 .idea
+/tools/tmp
+/tools/requirements.txt.back
+#/tools/requirements.txt
