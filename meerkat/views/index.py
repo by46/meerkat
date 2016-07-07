@@ -20,7 +20,7 @@ page = Blueprint('index', __name__)
 def index():
     conn = app.config['CONN']
     total_packages = conn.scard(PACKAGES)
-    return render_template('index.html', total_packages=total_packages)
+    return render_template('index.html', total_packages=total_packages, version=app.config['VERSION'])
 
 
 @page.route('/', methods=['POST'])

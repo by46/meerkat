@@ -12,5 +12,5 @@ sudo docker run --rm -v /home/benjamin/git/meerkat:/home/matrix  -v $(which dock
 deploy
 -------------
 ```shell
-sudo docker run --name meerkat -p 3141:8080 -dt meerkat:0.0.1 
+sudo docker run -e 'APP_CONFIG_FILE=/opt/biz/config/development.py' --name meerkat -p 3141:8080 -dt meerkat:0.0.1 
 ```
