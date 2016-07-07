@@ -51,7 +51,7 @@ def simple_index():
 
 @app.route('/simple/<prefix>/')
 def simple(prefix=''):
-    key = 'packages:{0}'.format(prefix)
+    key = 'packages:{0}'.format(prefix.lower())
     packages = conn.smembers(key)
     links = []
     for package in packages:
