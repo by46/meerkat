@@ -14,6 +14,7 @@ if __name__ == '__main__':
     path = sys.argv[1]
     pkg = sorted([os.path.join(path, x) for x in os.listdir(path) if os.path.isfile(os.path.join(path, x))])
     url = 'http://scmesos06:3141/'
+    url = 'http://localhost:8080/'
     with open('meerkat.log', 'wb') as w:
         for p in pkg:
             logging.error('process pkg: %s', p)

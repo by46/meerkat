@@ -18,6 +18,8 @@ _pkgname_parts_re = re.compile(
     r"[\.\-](?=cp\d|py\d|macosx|linux|sunos|solaris|irix|aix|cygwin|win)",
     re.I)
 
+pkg_normalize = re.compile('[\.\-]')
+
 
 def is_valid_pkg_filename(fname):
     """See https://github.com/pypiserver/pypiserver/issues/102"""
@@ -58,3 +60,21 @@ def guess_pkgname_and_version(path):
         parts = _pkgname_parts_re.split(ver_spec)
         version = parts[0]
     return pkgname, version
+
+
+def make_alias(pkg_name):
+    return [pkg_name]
+
+
+def normalize_pkg_name(pkg_name):
+    """
+    normalize pkg name , replace '.' and '-' to '_'
+    and lower the pkg name
+    :param pkg_name: pkg name
+    :return: `class`:`bool`, `class`:`str`
+    """
+    pkg_name = pkg_name.lower()
+    normalized = re.search(pkg_normalize, pkg_name) is not None
+    if normalized:
+        return normalized, re.sub(pkg_normalize, '_', pkg_name)
+    return False, pkg_name

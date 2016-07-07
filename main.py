@@ -51,7 +51,14 @@ def simple_index():
 
 @app.route('/simple/<prefix>/')
 def simple(prefix=''):
+    normalized, prefix = utils.normalize_pkg_name(prefix)
+    if normalized:
+        return redirect('/simple/{0}/'.format(prefix))
+
     key = 'packages:{0}'.format(prefix.lower())
+    if not conn.exists(key):
+        abort(404)
+
     packages = conn.smembers(key)
     links = []
     for package in packages:
@@ -91,44 +98,42 @@ def download(filename):
 
 
 def file_upload():
-    package = Upload._make(request.files.get(f, None) for f in ('content', 'gpg_signature'))
-    if not package.pkg:
+    # TODO(benjamin): process gpg_signature
+    package = request.files.get('content', None)
+    if not package:
         abort(400)
 
-    if package.sig and '{0}.asc'.format(package.pkg.raw_filename) != package.sig.raw_filename:
+    filename = package.filename
+    if not utils.is_valid_pkg_filename(filename):
+        # TODO(benjamin): add error description
         abort(400)
 
-    for f in package:
-        if not f:
-            continue
-        # upload package to dfis
-        filename = f.filename
-        if not utils.is_valid_pkg_filename(filename):
-            # TODO(benjamin): add error description
-            abort(400)
+    name_and_version = utils.guess_pkgname_and_version(filename)
+    if name_and_version is None:
+        # TODO(benjamin): add error description
+        abort(400)
 
-        pkg = utils.guess_pkgname_and_version(filename)
-        if pkg is None:
-            # TODO(benjamin): add error description
-            abort(400)
+    content = package.stream.read()
+    md5 = hashlib.md5(content).hexdigest()
+    client = cabinet.Cabinet(host=config.DFIS_HOST)
+    app.logger.info('upload package to dfis %s %s %s %s', config.DFIS_HOST, config.DFIS_GROUP, config.DFIS_TYPE,
+                    filename)
+    result = client.upload(StringIO(content), config.DFIS_GROUP, config.DFIS_TYPE, 'UPDATE', filename)
+    if result != httplib.OK:
+        app.logger.error('upload package error: status code %s', result)
+        abort(500)
 
-        content = f.stream.read()
-        md5 = hashlib.md5(content).hexdigest()
-        client = cabinet.Cabinet(host=config.DFIS_HOST)
-        app.logger.info('upload package to dfis %s %s %s %s', config.DFIS_HOST, config.DFIS_GROUP, config.DFIS_TYPE,
-                        filename)
-        result = client.upload(StringIO(content), config.DFIS_GROUP, config.DFIS_TYPE, 'UPDATE', filename)
-        if result == httplib.OK:
-            pkg_name, version = pkg
-            safe_filename = filename.lower()
-            url = client.make_url(config.DFIS_GROUP, config.DFIS_TYPE, filename)
-            conn.sadd(config.PACKAGES, filename)
-            conn.sadd(config.SIMPLES, pkg_name)
-            key = 'packages:{0}'.format(pkg_name.lower())
-            conn.sadd(key, filename)
-            key = 'package:{0}'.format(safe_filename)
-            info = dict(md5=md5, url=url, timestamp=time.time(), filename=filename)
-            conn.hmset(key, info)
+    pkg_name, version = name_and_version
+    safe_filename = filename.lower()
+    url = client.make_url(config.DFIS_GROUP, config.DFIS_TYPE, filename)
+    conn.sadd(config.PACKAGES, filename)
+    conn.sadd(config.SIMPLES, pkg_name)
+    _, pkg_name = utils.normalize_pkg_name(pkg_name)
+    key = 'packages:{0}'.format(pkg_name)
+    conn.sadd(key, filename)
+    key = 'package:{0}'.format(safe_filename)
+    info = dict(md5=md5, url=url, timestamp=time.time(), filename=filename)
+    conn.hmset(key, info)
 
 
 if __name__ == '__main__':
