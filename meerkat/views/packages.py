@@ -21,6 +21,7 @@ def list_packages():
         package_key = 'package:{0}'.format(package.lower())
         info = conn.hgetall(package_key)
         href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
+        times = info.get('downloadtimes')
         links.append(dict(file=package, href=href))
 
     return render_template('packages.html', links=links)
@@ -37,6 +38,7 @@ def download(filename):
                                                                group=app.config['DFIS_GROUP'],
                                                                type=app.config['DFIS_TYPE'],
                                                                filename=filename)
+        conn.zincrby('packages:downloadtimes',key , 1)
         return redirect(url)
 
     abort(404)
