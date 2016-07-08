@@ -9,8 +9,9 @@ __author__ = 'benjamin.c.yan'
 
 class Cabinet(object):
     def __init__(self, host, port=80):
-        self.__upload_url = 'http://{host}:{port}'.format(host=host, port=port)
-        self.__download_url = 'http://{host}:{port}'.format(host=host, port=port)
+        port = "" if port == 80 else (':' + str(port))
+        self.__upload_url = 'http://{host}{port}'.format(host=host,port=port)
+        self.__download_url = 'http://{host}{port}'.format(host=host, port=port)
 
     def make_url(self, group, file_type, filename, special_path=None):
         if special_path:
