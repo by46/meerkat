@@ -1,9 +1,9 @@
 import time
 
 import redis
+from flask import g
 
 from meerkat import app
-from meerkat import g
 from meerkat import utils
 from meerkat.constants import PACKAGES
 from meerkat.constants import SIMPLES
@@ -57,6 +57,16 @@ class DataAccess(object):
         key = 'package:{0}'.format(filename.lower())
         return conn.exists(key)
 
+    @staticmethod
+    def need_upload(filename, md5):
+        conn = get_db()
+        key = 'package:{0}'.format(filename.lower())
+        old_md5, = conn.hmget(key, 'md5')
+        return md5 != old_md5
+
+    # -------------------------------------
+    # libs
+    # -------------------------------------
     @staticmethod
     def get_libs():
         conn = get_db()

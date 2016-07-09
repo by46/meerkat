@@ -1,5 +1,6 @@
 # DFIS settings
 DFIS_HOST = '10.16.78.84'
+DFIS_PORT = 80
 DFIS_GROUP = 'dfis'
 DFIS_TYPE = 'pypi'
 

@@ -1,8 +1,10 @@
 import httplib
 import logging
-from cStringIO import StringIO
 
 import requests
+from flask import g
+
+from meerkat import app
 
 __author__ = 'benjamin.c.yan'
 
@@ -10,19 +12,24 @@ __author__ = 'benjamin.c.yan'
 class Cabinet(object):
     def __init__(self, host, port=80):
         port = "" if port == 80 else (':' + str(port))
-        self.__upload_url = 'http://{host}{port}'.format(host=host,port=port)
+        self._session = requests.session()
+        self.__upload_url = 'http://{host}{port}'.format(host=host, port=port)
         self.__download_url = 'http://{host}{port}'.format(host=host, port=port)
 
-    def make_url(self, group, file_type, filename, special_path=None):
+    def make_url(self, filename, special_path=None):
+        group = app.config['DFIS_GROUP']
+        file_type = app.config['DFIS_TYPE']
         if special_path:
             filename = special_path + "/" + filename
         return '{url}/{group}/{type}/{name}'.format(url=self.__download_url, group=group, type=file_type, name=filename)
 
-    def upload(self, io, group, file_type, method, filename, user='cabinet-client', special_path=None):
+    def upload(self, io, filename, user='cabinet-client', special_path=None):
 
         if special_path:
             filename = special_path + "/" + filename
-        # filename = quote(filename)
+        group = app.config['DFIS_GROUP']
+        file_type = app.config['DFIS_TYPE']
+        method = 'UPDATE'
         logging.info("process {url}/{group}/{type}/{name}".format(url=self.__upload_url,
                                                                   group=group,
                                                                   type=file_type,
@@ -33,22 +40,30 @@ class Cabinet(object):
                    'FileName': filename,
                    'FileUser': user,
                    'SpecialPath': special_path}
-        response = requests.post(self.__upload_url, headers=headers, data=io)
+        response = self._session.post(self.__upload_url, headers=headers, data=io)
         if response.status_code == httplib.OK:
             logging.info("process success")
         else:
             logging.error("process error {code}".format(code=response.status_code))
         return response.status_code
 
-    def download(self, group, file_type, filename, special_path=None):
-        if special_path:
-            filename = special_path + "/" + filename
-        url = '{url}/{group}/{type}/{name}'.format(url=self.__download_url, group=group, type=file_type, name=filename)
-        logging.info('process {url}'.format(url=url))
-        response = requests.get(url)
-        if response.status_code == httplib.OK:
-            logging.info("download success")
-            return StringIO(response.content)
-        else:
-            logging.info("download failure, response code : {code}".format(code=response.status_code))
-            return None
+
+def get_uploader():
+    if not hasattr(g, '_cabinet'):
+        g.dfis_cabinet = Cabinet(app.config['DFIS_HOST'], app.config['DFIS_PORT'])
+    return g.dfis_cabinet
+
+
+class Uploader(object):
+    @staticmethod
+    def upload(io, filename, user='cabinet-client', special_path=None):
+        client = get_uploader()
+        app.logger.info('upload package to dfis %s %s %s %s', app.config['DFIS_HOST'], app.config['DFIS_GROUP'],
+                        app.config['DFIS_TYPE'],
+                        filename)
+        return client.upload(io, filename, user, special_path) == httplib.OK
+
+    @staticmethod
+    def make_url(filename):
+        client = get_uploader()
+        return client.make_url(filename)

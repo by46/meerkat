@@ -1,5 +1,4 @@
 import hashlib
-import httplib
 from cStringIO import StringIO
 
 from flask import Blueprint
@@ -8,8 +7,8 @@ from flask import render_template
 from flask import request
 
 from meerkat import app
-from meerkat import cabinet
 from meerkat import utils
+from meerkat.cabinet import Uploader
 from meerkat.db import DataAccess
 
 page = Blueprint('index', __name__)
@@ -53,15 +52,14 @@ def file_upload():
 
     content = package.stream.read()
     md5 = hashlib.md5(content).hexdigest()
-    client = cabinet.Cabinet(host=app.config['DFIS_HOST'])
-    app.logger.info('upload package to dfis %s %s %s %s', app.config['DFIS_HOST'], app.config['DFIS_GROUP'],
-                    app.config['DFIS_TYPE'],
-                    filename)
-    result = client.upload(StringIO(content), app.config['DFIS_GROUP'], app.config['DFIS_TYPE'], 'UPDATE', filename)
-    if result != httplib.OK:
-        app.logger.error('upload package error: status code %s', result)
+    if not DataAccess.need_upload(filename, md5):
+        return ""
+
+    if not Uploader.upload(StringIO(content), filename):
+        app.logger.error('upload package error')
+        # TODO(benjamin): add error description
         abort(500)
 
     pkg_name, version = name_and_version
-    url = client.make_url(app.config['DFIS_GROUP'], app.config['DFIS_TYPE'], filename)
+    url = Uploader.make_url(filename)
     DataAccess.add_package(filename, pkg_name, version, md5, url)
