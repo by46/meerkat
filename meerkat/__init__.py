@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import redis
 from flask import Flask
+from flask import g
 
 from meerkat import cabinet
 from . import utils
@@ -12,6 +13,7 @@ __author__ = 'benjamin.c.yan'
 app = Flask(__name__, instance_relative_config=True)
 
 from meerkat import views
+
 
 app.register_blueprint(views.portal.page)
 app.register_blueprint(views.index.page)
