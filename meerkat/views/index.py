@@ -7,19 +7,20 @@ from flask import Blueprint
 from flask import abort
 from flask import render_template
 from flask import request
+from flask import g
 
 from meerkat import app
 from meerkat import cabinet
 from meerkat import utils
 from meerkat.constants import PACKAGES, SIMPLES
+from meerkat.db import DataAccess
 
 page = Blueprint('index', __name__)
 
 
 @page.route('/', methods=['GET'])
 def index():
-    conn = app.config['CONN']
-    total_packages = conn.scard(PACKAGES)
+    total_packages = DataAccess.total_packages()
     return render_template('index.html', total_packages=total_packages, version=app.config['VERSION'])
 
 
