@@ -2,3 +2,4 @@
 add total count
 add favicon.ico
 refactor project structure
+add download ranks
