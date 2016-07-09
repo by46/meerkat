@@ -3,13 +3,33 @@
 <head>
     <title>DownLoad Times</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+    <style>
+        .row-head {
+            min-width: 300px;
+            width: auto;
+        }
+        .row-times{
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
 <h1>DownLoad Times</h1>
-{% for link in links %}
-    <div><span>{{ link.file }}</span>
-        <span>{{ link.times }}</span>
-    </div>
-{% endfor %}
+<table style="width: 500px;">
+    <thead>
+    <tr>
+        <td class="row-head">Package</td>
+        <td class="row-times">Download Times</td>
+    </tr>
+    </thead>
+    {% for link in links %}
+        <tr>
+            <td class="row-head"><a href="{{ link.href }}">{{ link.file }}</a></td>
+            <td class="row-times">{{ link.times }}</td>
+        </tr>
+    {% endfor %}
+
+</table>
+
 </body>
 </html>

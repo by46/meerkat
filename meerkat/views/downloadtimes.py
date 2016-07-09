@@ -12,5 +12,7 @@ def list_ranks():
     ranks = conn.zrevrange('packages:downloadtimes', 0, -1, withscores=True)
     links = []
     for item in ranks:
-        links.append(dict(file=item[0], times=int(item[1])))
+        info = conn.hgetall(item[0])
+        herf = info.get('url')
+        links.append(dict(file=item[0], times=int(item[1]), herf=herf))
     return render_template('downloadtimes.html', links=links)
