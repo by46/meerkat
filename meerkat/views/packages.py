@@ -21,9 +21,7 @@ def list_packages():
         package_key = 'package:{0}'.format(package.lower())
         info = conn.hgetall(package_key)
         href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
-        times = info.get('downloadtimes')
         links.append(dict(file=package, href=href))
-
     return render_template('packages.html', links=links)
 
 
