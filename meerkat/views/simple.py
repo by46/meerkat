@@ -5,37 +5,32 @@ from flask import abort
 from flask import redirect
 from flask import render_template
 
-from meerkat import app
 from meerkat import utils
-from meerkat.constants import SIMPLES
+from meerkat.db import DataAccess
 
 page = Blueprint('simple', __name__)
 
 
 @page.route('/simple/')
 def simple_index():
-    conn = app.config['CONN']
-    links = conn.smembers(SIMPLES)
+    links = DataAccess.get_libs()
+
     links = sorted(links, key=string.lower)
     return render_template('simple.html', links=links)
 
 
 @page.route('/simple/<prefix>/')
 def simple(prefix=''):
-    conn = app.config['CONN']
     normalized, prefix = utils.normalize_pkg_name(prefix)
     if normalized:
         return redirect('/simple/{0}/'.format(prefix))
 
-    key = 'packages:{0}'.format(prefix.lower())
-    if not conn.exists(key):
+    if not DataAccess.has_lib(prefix):
         abort(404)
 
-    packages = conn.smembers(key)
     links = []
-    for package in packages:
-        package_key = 'package:{0}'.format(package)
-        info = conn.hgetall(package_key)
+    for package in DataAccess.get_packages_by_lib(prefix):
+        info = DataAccess.get_package(package)
         href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
         links.append(dict(file=package, href=href))
 

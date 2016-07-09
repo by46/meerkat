@@ -36,7 +36,6 @@ def update():
 
 
 def file_upload():
-    conn = app.config['CONN']
     # TODO(benjamin): process gpg_signature
     package = request.files.get('content', None)
     if not package:

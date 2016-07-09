@@ -6,20 +6,18 @@ from flask import redirect
 from flask import render_template
 
 from meerkat import app
-from meerkat.constants import PACKAGES
+from meerkat.db import DataAccess
 
 page = Blueprint('package', __name__)
 
 
 @page.route('/packages/')
 def list_packages():
-    conn = app.config['CONN']
-    packages = conn.smembers(PACKAGES)
+    packages = DataAccess.get_packages()
     packages = sorted(packages, key=string.lower)
     links = []
     for package in packages:
-        package_key = 'package:{0}'.format(package.lower())
-        info = conn.hgetall(package_key)
+        info = DataAccess.get_package(package)
         href = '/packages/{0}#md5={1}'.format(package, info.get('md5'))
         links.append(dict(file=package, href=href))
     return render_template('packages.html', links=links)
@@ -27,16 +25,13 @@ def list_packages():
 
 @page.route('/packages/<filename>')
 def download(filename):
-    conn = app.config['CONN']
     filename = filename.lower()
-    key = 'package:{0}'.format(filename)
-    if conn.exists(key):
-        # TODO(benjamin): add statistic info
+    if DataAccess.has_package_file(filename):
         url = 'http://{host}/{group}/{type}/{filename}'.format(host=app.config['DFIS_HOST'],
                                                                group=app.config['DFIS_GROUP'],
                                                                type=app.config['DFIS_TYPE'],
                                                                filename=filename)
-        conn.zincrby('packages:downloadtimes',key , 1)
+        DataAccess.add_download_score(filename)
         return redirect(url)
 
     abort(404)
