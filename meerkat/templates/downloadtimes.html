@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DownLoad Times</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+</head>
+<body>
+<h1>DownLoad Times</h1>
+{% for link in links %}
+    <div><span>{{ link.file }}</span>
+        <span>{{ link.times }}</span>
+    </div>
+{% endfor %}
+</body>
+</html>

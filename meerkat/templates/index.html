@@ -1,11 +1,11 @@
 <html>
 <head>
     <title>Welcome to Meerkat!</title>
-    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
 </head>
 <body>
 <h1>Welcome to Meerkat!</h1>
-<p>This is a PyPI compatible package index serving {{total_packages}} packages.</p>
+<p>This is a PyPI compatible package index serving {{ total_packages }} packages.</p>
 
 <p> To use this server with pip, run the the following command:
 <blockquote><pre>
@@ -22,9 +22,12 @@ easy_install -i http://scmesos06:3141/simple/ PACKAGE
 </p>
 
 <p>The complete list of all packages can be found <a href="/packages/">here</a>
-    or via the <a href="/simple/">simple</a> index.</p>
+    or via the <a href="/simple/">simple</a> index.
+</p>
+<p>The complete list of all packages ranks here <a href="/downloadtimes/">here</a>.
+</p>
 <p>
-    This instance is running version {{version}} of the <a href="http://trgit2/by46/meerkat">Meerkat</a> software.
+    This instance is running version {{ version }} of the <a href="http://trgit2/by46/meerkat">Meerkat</a> software.
 </p>
 </body>
 </html>

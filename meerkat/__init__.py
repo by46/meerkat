@@ -19,6 +19,7 @@ app.register_blueprint(views.portal.page)
 app.register_blueprint(views.index.page)
 app.register_blueprint(views.simple.page)
 app.register_blueprint(views.packages.page)
+app.register_blueprint(views.downloadtimes.page)
 
 app.config.from_object('config.default')
 app.config.from_pyfile('config.py')

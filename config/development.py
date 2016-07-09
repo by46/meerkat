@@ -1,3 +1,4 @@
-REDIS_HOST = 'scdfis01'
+REDIS_HOST = '10.16.76.197'
 REDIS_PORT = 6379
 LOG = 'logs'
+HTTP_HOST = '127.0.0.1'

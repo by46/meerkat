@@ -76,4 +76,5 @@ def file_upload():
     conn.sadd(key, filename)
     key = 'package:{0}'.format(safe_filename)
     info = dict(md5=md5, url=url, timestamp=time.time(), filename=filename)
+    conn.zadd('packages:downloadtimes',key,0 )
     conn.hmset(key, info)
