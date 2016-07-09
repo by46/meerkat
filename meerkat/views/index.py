@@ -57,8 +57,7 @@ def file_upload():
 
     if not Uploader.upload(StringIO(content), filename):
         app.logger.error('upload package error')
-        # TODO(benjamin): add error description
-        abort(500)
+        abort(500, mess)
 
     pkg_name, version = name_and_version
     url = Uploader.make_url(filename)
