@@ -1,9 +1,11 @@
 import string
+import httplib
 
 from flask import Blueprint
 from flask import abort
 from flask import redirect
 from flask import render_template
+from flask import Response
 
 from meerkat import app
 from meerkat.db import DataAccess
@@ -34,4 +36,4 @@ def download(filename):
         DataAccess.add_download_score(filename)
         return redirect(url)
 
-    abort(404)
+    return Response('package not found', status=httplib.NOT_FOUND)
