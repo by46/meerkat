@@ -1,4 +1,1 @@
-gevent
-Flask
-redis
-requests
+lazy-object-proxy

@@ -1,4 +1,5 @@
-REDIS_HOST = '10.16.76.197'
+REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 LOG = 'logs'
-HTTP_HOST = '127.0.0.1'
+HTTP_HOST = '0.0.0.0'
+HTTP_PORT = 3141

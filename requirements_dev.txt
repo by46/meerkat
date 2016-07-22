@@ -1,2 +1,5 @@
 requests
 pip
+gevent
+Flask
+redis
