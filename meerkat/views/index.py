@@ -55,7 +55,7 @@ def file_upload():
     if not DataAccess.need_upload(filename, md5):
         return ""
 
-    if not Uploader.upload(StringIO(content), filename):
+    if not Uploader.upload(StringIO(content), filename, special_path='pypi'):
         app.logger.error('upload package error')
         abort(500)
 

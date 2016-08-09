@@ -4,10 +4,11 @@ import os
 import os.path
 import shutil
 
-import pip
 import requests
 
-url = 'http://scmesos06:3141/'
+import pip
+
+url = 'http://localhost:3141/'
 
 
 def upload(package):
@@ -25,14 +26,15 @@ def main():
     req = 'requirements.txt'
     with open(req, 'rb') as r, open(req + '.back', 'wb') as w:
         for line in r:
-            args = ['-v', 'download', '-d', tmp, '-i', 'https://pypi.tuna.tsinghua.edu.cn/simple', line]
+            args = ['--proxy', 'http://localhost:3128', '-v', 'download', '-d', tmp, '-i',
+                    'https://pypi.tuna.tsinghua.edu.cn/simple', line]
             pip.main(args)
             for package in os.listdir(tmp):
                 package_full_path = os.path.join(tmp, package)
                 if not upload(package_full_path):
                     logging.error('upload packages error %s', package)
 
-            shutil.rmtree(tmp,ignore_errors=True)
+            shutil.rmtree(tmp, ignore_errors=True)
             w.write(line)
 
 

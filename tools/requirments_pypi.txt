@@ -1,0 +1,10 @@
+configparser
+python-jenkins
+gitpython
+requests
+gevent
+flask
+celery
+click>=2.0
+Werkzeug>=0.7
+jsonschema

@@ -25,8 +25,8 @@ class Cabinet(object):
 
     def upload(self, io, filename, user='cabinet-client', special_path=None):
 
-        if special_path:
-            filename = special_path + "/" + filename
+        # if special_path:
+        #     filename = special_path + "/" + filename
         group = app.config['DFIS_GROUP']
         file_type = app.config['DFIS_TYPE']
         method = 'UPDATE'
@@ -39,7 +39,7 @@ class Cabinet(object):
                    'FileMethod': method,
                    'FileName': filename,
                    'FileUser': user,
-                   'SpecialPath': special_path}
+                   'SpecialFolderPath': special_path}
         response = self._session.post(self.__upload_url, headers=headers, data=io)
         if response.status_code == httplib.OK:
             logging.info("process success")
