@@ -35,7 +35,8 @@ def download(filename):
         DataAccess.add_download_score(filename)
         response = requests.get(url)
         if response.status_code == httplib.OK:
-            return response.content
+            headers = {'Content-Type': response.headers.get('Content-Type', 'text/html')}
+            return response.content, httplib.OK, headers
         elif response.status_code == httplib.NOT_FOUND:
             return Response('package file not found in dfis', status=httplib.NOT_FOUND)
         else:
