@@ -3,7 +3,7 @@
   "image": "docker.neg/python:neg-biz",
   "tag": "0.0.1",
   "port": [8080],
-  "env": {"ENV": "development"},
+  "env": {"ENV": "development", "NO_PROXY": "*"},
   "volume": [],
   "cmd": [ "python", "run.py"]
 }

@@ -1,9 +1,9 @@
 import httplib
 import string
 
+import requests
 from flask import Blueprint
 from flask import Response
-from flask import redirect
 from flask import render_template
 
 from meerkat import app
@@ -33,6 +33,12 @@ def download(filename):
                                                                     type=app.config['DFIS_TYPE'],
                                                                     filename=filename)
         DataAccess.add_download_score(filename)
-        return redirect(url)
+        response = requests.get(url)
+        if response.status_code == httplib.OK:
+            return response.content
+        elif response.status_code == httplib.NOT_FOUND:
+            return Response('package file not found in dfis', status=httplib.NOT_FOUND)
+        else:
+            return Response("Download file from dfis error %s", status=httplib.INTERNAL_SERVER_ERROR)
 
     return Response('package not found', status=httplib.NOT_FOUND)

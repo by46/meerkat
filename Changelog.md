@@ -1,7 +1,8 @@
 # Change log
 
 ## [Unrelease]
-### Added
+### Changed
+- changed download package method
 
 
 ## [0.0.1] - 2016-07-01
