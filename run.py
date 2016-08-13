@@ -1,3 +1,7 @@
+import gevent.monkey
+
+gevent.monkey.patch_all()
+
 from gevent.wsgi import WSGIServer
 
 from meerkat import app
