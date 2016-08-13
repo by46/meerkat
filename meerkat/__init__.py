@@ -6,6 +6,7 @@ from __future__ import absolute_import
 import os
 
 from flask import Flask
+from flask_log import Log
 
 from . import utils
 
@@ -32,3 +33,6 @@ env = os.environ.get(key)
 app.config.from_object('config.{0}'.format(env.lower()))
 
 app.config['VERSION'] = __version__
+
+# Config Logger
+Log(app)

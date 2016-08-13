@@ -8,7 +8,7 @@ import requests
 
 import pip
 
-url = 'http://localhost:3141/'
+url = 'http://scmesos06'
 
 
 def upload(package):

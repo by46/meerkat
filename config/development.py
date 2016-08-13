@@ -8,4 +8,7 @@ DFIS_DOWNLOAD = '10.1.50.251'
 # REDIS Settings
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
-LOG = 'logs'
+
+# WSGI Settings
+WSGI_LOG = 'default'
+

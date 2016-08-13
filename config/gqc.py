@@ -13,3 +13,11 @@ LOG = '/var/tmp/logs'
 # APP
 HTTP_HOST = ''
 HTTP_PORT = 3141
+
+# WSGI Settings
+WSGI_LOG = None
+
+# Flask-Log Settings
+LOG_LEVEL = 'debug'
+LOG_FILENAME = "/var/meerkat/error.log"
+LOG_ENABLE_CONSOLE = False
