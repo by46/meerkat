@@ -16,3 +16,4 @@ Fabric
 supervisor
 pycassa
 Flask-Cors
+pymssql

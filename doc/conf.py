@@ -52,7 +52,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'recipe'
+project = u'Meerkat'
 copyright = u'2016, dfis'
 author = u'dfis'
 

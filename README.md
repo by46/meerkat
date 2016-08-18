@@ -1,16 +1,8 @@
-Meerkat
-================
-A Pypi Server implements
+# Meerkat
 
-build
----------------------------------------
-```shell
-sudo docker run --rm -v /home/benjamin/git/meerkat:/home/matrix  -v $(which docker):$(which docker) -v /var/run/docker.sock:/var/run/docker.sock docker.neg/matrix:0.0.2 /usr/local/bin/matrix.sh
+Meerkat是一个PYPI私有仓库实现，用于托管Python第三方依赖包。
 
-```
+## 使用
 
-deploy
--------------
-```shell
-sudo docker run -e 'APP_CONFIG_FILE=/opt/biz/config/development.py' --name meerkat -p 3141:8080 -dt meerkat:0.0.1 
-```
+Python提供了众多依赖管理的工具，其中最著名的是[PIP](https://pip.pypa.io/en/stable/), 
+也可以查看[PIP 教程](http://confluence.newegg.org/display/DFIS/PIP)

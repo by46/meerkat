@@ -15,7 +15,7 @@ if __name__ == '__main__':
     path = 'tools\\tmp'
     pkg = sorted([os.path.join(path, x) for x in os.listdir(path) if os.path.isfile(os.path.join(path, x))])
     # pkg = [r'D:\Git\meerkat\tools\\tmp\\lazy-object-proxy-1.2.2.tar.gz']
-    url = 'http://scmesos06:3141/'
+    url = 'http://scmesos06/'
     # url = 'http://localhost:8080/'
     with open('meerkat.log', 'wb') as w:
         for p in pkg:
