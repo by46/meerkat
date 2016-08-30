@@ -1,1 +1,9 @@
-pymssql
+Flask
+Flask-Cors
+Flask-Moment
+Flask-Bootstrap
+Flask-WTF
+Flask-Script
+Flask-Migrate
+Flask-Mail
+Flask-Login

@@ -3,7 +3,6 @@ python-jenkins
 gitpython
 requests
 gevent
-Flask
 celery
 click>=2.0
 Werkzeug>=0.7
@@ -15,5 +14,23 @@ MySQL
 Fabric
 supervisor
 pycassa
-Flask-Cors
 pymssql
+orderedmultidict
+orderedmultidict==0.7.5
+requests==2.8.1
+furl
+SQLAlchemy
+MySQL-python
+
+# Flask
+Flask
+Flask-Cors
+Flask-Moment
+Flask-Bootstrap
+Flask-WTF
+Flask-SQLAlchemy
+Flask-Script
+Flask-Migrate
+Flask-Mail
+Flask-Login
+Flask-RESTful
