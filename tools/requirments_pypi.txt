@@ -22,6 +22,12 @@ furl
 SQLAlchemy
 MySQL-python
 
+# unittest
+httpretty
+
+# tools
+Coverage
+
 # Flask
 Flask
 Flask-Cors
@@ -34,3 +40,6 @@ Flask-Migrate
 Flask-Mail
 Flask-Login
 Flask-RESTful
+
+# etcd
+python-etcd
